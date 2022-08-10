@@ -76,7 +76,7 @@ function Order() {
                             <ErrorMessage name='phone' component='div'/>
                         </div>
                     </div>
-                    <button type='submit'>Submit</button>
+                    <button className='center' type='submit'>Submit</button>
                 </Form>
             )}
         </Formik>

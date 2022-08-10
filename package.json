@@ -1,5 +1,6 @@
 {
   "name": "macaron-website",
+  "homepage": "https://CrystalKeck27.github.io/macaron-website",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,6 +17,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -43,6 +46,7 @@
     "@types/jest": "^28.1.6",
     "@types/node": "^18.6.5",
     "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6"
+    "@types/react-dom": "^18.0.6",
+    "gh-pages": "^4.0.0"
   }
 }

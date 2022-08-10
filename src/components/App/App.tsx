@@ -7,16 +7,12 @@ import Order from "../Order/Order";
 function App() {
     return (
         <div className="App">
-            <Router>
+            <Router basename={process.env.PUBLIC_URL}>
                 <div>
-                    <ul>
-                        <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/order">Order</Link>
-                        </li>
-                    </ul>
+                    <div className='Navigation'>
+                        <Link className='PageLink' id='homeLink' to="/">Creations by Bree</Link>
+                        <Link className='PageLink' id='orderLink' to="/order">Place Order</Link>
+                    </div>
 
                     <Routes>
                         <Route path="/" element={<Home/>}/>
