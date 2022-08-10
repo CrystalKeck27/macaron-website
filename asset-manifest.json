@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/macaron-website/static/css/main.a2b8f66b.css",
-    "main.js": "/macaron-website/static/js/main.012872d8.js",
+    "main.js": "/macaron-website/static/js/main.2c3e5737.js",
     "static/js/787.4753a80d.chunk.js": "/macaron-website/static/js/787.4753a80d.chunk.js",
     "index.html": "/macaron-website/index.html",
     "main.a2b8f66b.css.map": "/macaron-website/static/css/main.a2b8f66b.css.map",
-    "main.012872d8.js.map": "/macaron-website/static/js/main.012872d8.js.map",
+    "main.2c3e5737.js.map": "/macaron-website/static/js/main.2c3e5737.js.map",
     "787.4753a80d.chunk.js.map": "/macaron-website/static/js/787.4753a80d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a2b8f66b.css",
-    "static/js/main.012872d8.js"
+    "static/js/main.2c3e5737.js"
   ]
 }
