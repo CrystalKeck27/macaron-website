@@ -2,22 +2,12 @@ import React from "react";
 
 import "./Order.css";
 import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
-
-interface MacaronData {
-    name: string;
-    quantity: number;
-}
-
-interface OrderFormValues {
-    macarons: MacaronData[];
-    name: string;
-    email: string;
-    phone: string;
-}
+import {getCurrentMacarons, MacaronOrder} from "../../services/Firestore";
 
 function Order() {
-    const macaronsNotLoaded: OrderFormValues = {
+    const macaronsNotLoaded: MacaronOrder = {
         macarons: [],
+        specialInstructions: "",
         name: "",
         email: "",
         phone: ""
@@ -26,57 +16,49 @@ function Order() {
     const [initialValues, setInitialValues] = React.useState(macaronsNotLoaded);
 
     React.useEffect(() => {
-        const macarons = [
-            {
-                name: "Cherry Berry Unicorn",
-                quantity: 0
-            },
-            {
-                name: "Blue Raspberry Rainbow",
-                quantity: 0
-            },
-            {
-                name: "Minecraft",
-                quantity: 0
-            },
-            {
-                name: "Vanilla",
-                quantity: 0
-            }
-        ];
-        //execute after 1 second
-        setTimeout(() => {
+        getCurrentMacarons().then(flavors => {
+            const flavorsAndCounts = flavors.map(flavor => {
+                return {
+                    flavor: flavor.flavor,
+                    quantity: 0
+                };
+            });
             setInitialValues({
-                macarons: macarons,
+                macarons: flavorsAndCounts,
+                specialInstructions: "",
                 name: "",
                 email: "",
                 phone: ""
             });
-        }, 1000);
+        });
     }, []);
 
-    function onSubmit(values: OrderFormValues) {
+    function onSubmit(values: MacaronOrder) {
         console.log(values);
     }
 
     return <div className="Order">
         <Formik enableReinitialize={true} initialValues={initialValues} onSubmit={onSubmit}>
             {({values}) => (
-                <Form className='orderForm'>
+                values.macarons.length > 0 ? <Form className='orderForm'>
                     <FieldArray name='macarons'>
                         {() => (
                             <div className='macaronSelection'>
-                                {values.macarons.length > 0 ? values.macarons.map((macaron, index) => (
+                                {values.macarons.map((macaron, index) => (
                                     <div className='macaronSpinner' key={index}>
-                                        <label htmlFor={`macaron[${index}].quantity`}>{macaron.name}</label>
+                                        <label htmlFor={`macaron[${index}].quantity`}>{macaron.flavor}</label>
                                         <Field name={`macarons[${index}].quantity`} type='number' min='0' max='12'
                                                step='2'/>
                                         <ErrorMessage name={`macarons[${index}].quantity`} component='div'/>
                                     </div>
-                                )) : <p>Loading this month's macarons...</p>}
+                                ))}
                             </div>
                         )}
                     </FieldArray>
+                    <div>
+                        <Field name='specialInstructions' type='text' placeholder='Special Instructions'/>
+                        <ErrorMessage name='specialInstructions' component='div'/>
+                    </div>
                     <div className='personalInfo'>
                         <div className='personalInfoBlock'>
                             <Field name='name' type='text' placeholder='Name'/>
@@ -91,8 +73,11 @@ function Order() {
                             <ErrorMessage name='phone' component='div'/>
                         </div>
                     </div>
+                    <div>
+                        <p>Total: {values.macarons.reduce((acc, curr) => acc + curr.quantity, 0)}</p>
+                    </div>
                     <button className='center' type='submit'>Submit</button>
-                </Form>
+                </Form> : <p>Loading this month's macarons...</p>
             )}
         </Formik>
     </div>;
