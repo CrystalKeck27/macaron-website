@@ -31,6 +31,7 @@ export interface MacaronFlavorSet {
 
 export interface MacaronOrder {
     macarons: MacaronCount[];
+    total: number;
     specialInstructions: string;
     name: string;
     email: string;
@@ -44,24 +45,17 @@ interface TimedMacaronOrder extends MacaronOrder {
 export async function getCurrentMacarons(): Promise<MacaronFlavor[]> {
     const q = query(macaronFlavorsCollection, where('effectiveAt', '<=', Timestamp.now()), orderBy('effectiveAt', 'desc'), limit(1));
     const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+        return [];
+    }
     const flavorSet = snapshot.docs[0].data() as MacaronFlavorSet;
     return flavorSet.flavors;
 }
 
 export async function createOrder(order: MacaronOrder): Promise<void> {
-    await addDoc(ordersCollection, {
-        createdAt: Timestamp.now(),
-        macarons: [
-            {
-                name: 'Cherry Berry Unicorn',
-                quantity: 1
-            },
-            {
-                name: 'Blue Raspberry Rainbow'
-            },
-            {
-                name: 'Minecraft'
-            }
-        ]
-    });
+    await addOrder({...order, createdAt: Timestamp.now()});
+}
+
+async function addOrder(order: TimedMacaronOrder): Promise<void> {
+    await addDoc(ordersCollection, order);
 }

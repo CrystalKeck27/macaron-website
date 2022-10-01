@@ -2,11 +2,12 @@ import React from "react";
 
 import "./Order.css";
 import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
-import {getCurrentMacarons, MacaronOrder} from "../../services/Firestore";
+import {createOrder, getCurrentMacarons, MacaronOrder} from "../../services/Firestore";
 
 function Order() {
     const macaronsNotLoaded: MacaronOrder = {
         macarons: [],
+        total: 0,
         specialInstructions: "",
         name: "",
         email: "",
@@ -14,6 +15,9 @@ function Order() {
     };
 
     const [initialValues, setInitialValues] = React.useState(macaronsNotLoaded);
+    const [loading, setLoading] = React.useState(true);
+    const [submitting, setSubmitting] = React.useState(false);
+    const [submitted, setSubmitted] = React.useState(false);
 
     React.useEffect(() => {
         getCurrentMacarons().then(flavors => {
@@ -25,22 +29,61 @@ function Order() {
             });
             setInitialValues({
                 macarons: flavorsAndCounts,
+                total: 0,
                 specialInstructions: "",
                 name: "",
                 email: "",
                 phone: ""
             });
+            setLoading(false);
+        }).catch(error => {
+            console.log(error);
+            setLoading(false);
         });
     }, []);
 
+
     function onSubmit(values: MacaronOrder) {
-        console.log(values);
+        setSubmitting(true);
+        createOrder(values).then(() => {
+            setSubmitting(false);
+            setSubmitted(true);
+        });
     }
 
-    return <div className="Order">
-        <Formik enableReinitialize={true} initialValues={initialValues} onSubmit={onSubmit}>
+    function validate(values: MacaronOrder) {
+        const errors: any = {};
+        if (!values.name) {
+            errors.name = "Required";
+        }
+        //validate email
+        if (!values.email) {
+            errors.email = "Required";
+        } else if (!/^[A-Z\d._%+-]+@[A-Z\d.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+            errors.email = "Invalid email address";
+        }
+        //validate phone
+        if (!values.phone) {
+            errors.phone = "Required";
+        } else if (!/^\(?(\d{3})\)?[-. ]?(\d{3})[-. ]?(\d{4})$/i.test(values.phone)) {
+            errors.phone = "Invalid phone number";
+        }
+
+        //if total is not a multiple of six, add error
+        let total = 0;
+        values.macarons.forEach(macaron => {
+            total += macaron.quantity;
+        });
+        if (total % 6 !== 0) {
+            errors.total = "Must order a multiple of six";
+        }
+        return errors;
+    }
+
+    let content =
+        <Formik enableReinitialize={true} initialValues={initialValues} onSubmit={onSubmit} validate={validate}>
             {({values}) => (
-                values.macarons.length > 0 ? <Form className='orderForm'>
+                <Form className='orderForm'>
                     <FieldArray name='macarons'>
                         {() => (
                             <div className='macaronSelection'>
@@ -48,7 +91,7 @@ function Order() {
                                     <div className='macaronSpinner' key={index}>
                                         <label htmlFor={`macaron[${index}].quantity`}>{macaron.flavor}</label>
                                         <Field name={`macarons[${index}].quantity`} type='number' min='0' max='12'
-                                               step='2'/>
+                                               step='1'/>
                                         <ErrorMessage name={`macarons[${index}].quantity`} component='div'/>
                                     </div>
                                 ))}
@@ -75,11 +118,26 @@ function Order() {
                     </div>
                     <div>
                         <p>Total: {values.macarons.reduce((acc, curr) => acc + curr.quantity, 0)}</p>
+                        <ErrorMessage name='total' component='div'/>
                     </div>
                     <button className='center' type='submit'>Submit</button>
-                </Form> : <p>Loading this month's macarons...</p>
+                </Form>
             )}
-        </Formik>
+        </Formik>;
+
+    if (submitting) {
+        content = <div>Placing order...</div>;
+    } else if (submitted) {
+        content = <div>Order placed!</div>;
+    } else if (loading) {
+        content = <div>Loading...</div>;
+    } else if (initialValues.macarons.length === 0) {
+        content = <div>No macarons this month</div>;
+    }
+
+    return <div className="Order">
+        <div className="OrderBackground"></div>
+        {content}
     </div>;
 }
 

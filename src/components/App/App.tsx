@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
-import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
+import {HashRouter as Router, Link, Route, Routes} from "react-router-dom";
 import Home from "../Home/Home";
 import Order from "../Order/Order";
 
 function App() {
     return (
         <div className="App">
-            <Router basename={process.env.PUBLIC_URL}>
+            <Router>
                 <div>
                     <div className='Navigation'>
                         <Link className='PageLink' id='homeLink' to="/">Creations by Bree</Link>

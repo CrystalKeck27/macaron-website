@@ -3,9 +3,12 @@
 }
 
 .Navigation {
-    color: white;
-    background-color: pink;
-    margin: 0;
+    color: var(--text-color);
+    background-color: var(--header-color);
+    border: var(--text-color);
+    border-width: 2px;
+    border-style: solid;
+    margin: 2%;
     padding: 0;
     display: flex;
     justify-content: space-between;
@@ -13,7 +16,7 @@
 
 .PageLink {
     float: left;
-    color: white;
+    color: var(--text-color);
     text-decoration: none;
     font-size: xxx-large;
     font-family: 'Bebas Neue', cursive;
