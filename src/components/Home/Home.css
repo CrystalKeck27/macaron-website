@@ -1,5 +1,5 @@
 .App-header {
-    background-color: #282c34;
+    background-color: #282c34dd;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -10,4 +10,12 @@
 
 .App-link {
     color: #61dafb;
+}
+
+.BackgroundImage {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }

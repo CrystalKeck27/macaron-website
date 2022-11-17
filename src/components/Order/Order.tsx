@@ -2,7 +2,7 @@ import React from "react";
 
 import "./Order.css";
 import {ErrorMessage, Field, FieldArray, Form, Formik} from "formik";
-import {createOrder, getCurrentMacarons, MacaronOrder} from "../../services/Firestore";
+import {createOrder, getCurrentMacarons, getOrders, MacaronOrder} from "../../services/Firestore";
 
 function Order() {
     const macaronsNotLoaded: MacaronOrder = {
@@ -39,6 +39,11 @@ function Order() {
         }).catch(error => {
             console.log(error);
             setLoading(false);
+        });
+        getOrders().then(orders => {
+            console.log(orders);
+        }).catch(error => {
+            console.log(error);
         });
     }, []);
 
